@@ -1,45 +1,45 @@
 # Codebase Q&A
 
-ever opened a big codebase and had no idea where anything is? this project fixes that.
-you paste a github repo link, it reads all the code, and then you can ask it questions like:
+Ever opened a big codebase and had no idea where anything is? This project fixes that.
+You paste a GitHub repo link, it reads all the code, and then you can ask it questions like:
 
-- "where is authentication handled?"
-- "what does the login function do?"
-- "how is the database connected?"
+- "Where is authentication handled?"
+- "What does the login function do?"
+- "How is the database connected?"
 
-and it replies with the actual answer + tells you exactly which file and which line the code is in.
+And it replies with the actual answer + tells you exactly which file and which line the code is in.
 
-built this as a practice project to learn LangChain and how RAG (Retrieval Augmented Generation) works.
+Built this as a practice project to learn LangChain and how RAG (Retrieval Augmented Generation) works.
 
 ---
 
-## how it actually works
+## How it actually works
 
-so there are two main phases:
+So there are two main phases:
 
-**phase 1 — indexing (when you paste a repo url)**
+**Phase 1 — Indexing (when you paste a repo url)**
 
-1. it clones the github repo to your machine
-2. goes through every code file (python, js, java, go etc.)
-3. for python files it uses AST to split code at function and class boundaries — so each chunk is actually a complete function, not some random lines
-4. for other files it uses LangChain's text splitter to break them into chunks
-5. each chunk gets converted into a vector (basically a list of numbers that represents the meaning of that code) using a model called `all-MiniLM-L6-v2`
-6. all those vectors get stored in FAISS (an in-memory vector database)
+1. It clones the GitHub repo to your machine
+2. Goes through every code file (Python, JS, Java, Go etc.)
+3. For Python files it uses AST to split code at function and class boundaries — so each chunk is actually a complete function, not some random lines
+4. For other files it uses LangChain's text splitter to break them into chunks
+5. Each chunk gets converted into a vector (basically a list of numbers that represents the meaning of that code) using a model called `all-MiniLM-L6-v2`
+6. All those vectors get stored in FAISS (an in-memory vector database)
 
-**phase 2 — asking a question**
+**Phase 2 — Asking a question**
 
-1. you type a question
-2. your question also gets converted into a vector
+1. You type a question
+2. Your question also gets converted into a vector
 3. FAISS finds the code chunks whose vectors are closest to your question vector (this is the retrieval part)
-4. those chunks + your question get sent to Groq's free LLM (llama 3.1)
-5. the LLM reads the code and writes an answer, mentioning exact file names and line numbers
-6. answer shows up in the chat with source references like `auth/middleware.py:42-67`
+4. Those chunks + your question get sent to Groq's free LLM (llama 3.1)
+5. The LLM reads the code and writes an answer, mentioning exact file names and line numbers
+6. Answer shows up in the chat with source references like `auth/middleware.py:42-67`
 
-this whole approach is called RAG — instead of asking the LLM to memorize the whole codebase, we just fetch the relevant parts and show it only those. way more accurate.
+This whole approach is called RAG — instead of asking the LLM to memorize the whole codebase, we just fetch the relevant parts and show it only those. Way more accurate.
 
 ---
 
-## what i used
+## What I used
 
 - **FastAPI** — backend server, handles /index and /ask requests
 - **Streamlit** — frontend chat UI
@@ -51,67 +51,67 @@ this whole approach is called RAG — instead of asking the LLM to memorize the 
 
 ---
 
-## how to run locally
+## How to run locally
 
-**step 1 — clone the repo**
+**Step 1 — Clone the repo**
 ```bash
 git clone https://github.com/your-username/codebase-qa
 cd codebase-qa
 ```
 
-**step 2 — create virtual environment**
+**Step 2 — Create virtual environment**
 ```bash
 python -m venv venv
 venv\Scripts\activate.bat     # windows
 source venv/bin/activate      # mac/linux
 ```
 
-**step 3 — install dependencies**
+**Step 3 — Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
-this will take a few minutes, lot of packages.
+This will take a few minutes, lot of packages.
 
-**step 4 — add your groq api key**
+**Step 4 — Add your Groq API key**
 
-create a `.env` file in the root folder and paste this:
+Create a `.env` file in the root folder and paste this:
 ```
 GROQ_API_KEY=your_key_here
 ```
-get a free key at https://console.groq.com — takes 2 minutes, no credit card.
+Get a free key at https://console.groq.com — takes 2 minutes, no credit card.
 
-**step 5 — run the backend**
+**Step 5 — Run the backend**
 ```bash
 cd backend
 uvicorn main:app --reload --port 8000
 ```
-you can test it at `http://localhost:8000/docs` — FastAPI gives a free UI to try the endpoints.
+You can test it at `http://localhost:8000/docs` — FastAPI gives a free UI to try the endpoints.
 
-**step 6 — run the frontend** (open a new terminal)
+**Step 6 — Run the frontend** (open a new terminal)
 ```bash
 cd frontend
 streamlit run app.py
 ```
-open `http://localhost:8501` and start using it.
+Open `http://localhost:8501` and start using it.
 
 ---
 
-## how to run with docker
+## How to run with Docker
 
-make sure Docker Desktop is running, then:
+Make sure Docker Desktop is running, then:
 ```bash
 docker-compose up --build
 ```
-frontend → `http://localhost:8501`
-backend → `http://localhost:8000`
+Frontend → `http://localhost:8501`
+Backend → `http://localhost:8000`
 
-to push images to docker hub (replace with your username in docker-compose.yml first):
+To push images to Docker Hub (replace with your username in docker-compose.yml first):
 ```bash
 docker-compose build
 docker-compose push
 ```
 
-to run on any other computer after pushing:
+To run on any other computer after pushing:
 ```bash
 docker-compose pull
 docker-compose up
@@ -119,7 +119,7 @@ docker-compose up
 
 ---
 
-## project structure
+## Project structure
 
 ```
 codebase-qa/
@@ -138,6 +138,6 @@ codebase-qa/
 
 ---
 
-## one thing to keep in mind
+## One thing to keep in mind
 
-FAISS runs in memory so if you restart the backend the index gets cleared and you'll need to re-index the repo. good enough for a project though.
+FAISS runs in memory so if you restart the backend the index gets cleared and you'll need to re-index the repo. Good enough for a project though.
