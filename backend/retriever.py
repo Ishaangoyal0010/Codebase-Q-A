@@ -1,9 +1,8 @@
-from indexer import vector_store
+import indexer
 
 
 def retrieve(question, top_k=6):
-    # langchain similarity search with scores
-    results = vector_store.similarity_search_with_score(question, k=top_k)
+    results = indexer.vector_store.similarity_search_with_score(question, k=top_k)
 
     chunks = []
     for doc, score in results:

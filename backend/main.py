@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from indexer import index_repo, vector_store
+from indexer import index_repo
 from retriever import retrieve
 from llm import ask_llm
 

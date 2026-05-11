@@ -1,4 +1,5 @@
 import os
+import stat
 import shutil
 import subprocess
 import ast
@@ -9,18 +10,27 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
+# langchain embedding wrapper around sentence-transformers
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-# FAISS store
+# global faiss store, starts empty
 vector_store = None
 
 SKIP_DIRS = {"node_modules", ".git", "__pycache__", "venv", ".venv", "dist", "build"}
 ALLOWED_EXTENSIONS = {".py", ".js", ".ts", ".java", ".go", ".cpp", ".c", ".rb"}
 
 
+# windows fix — git files are read-only so normal rmtree fails
+def force_remove(path):
+    def handle_error(func, path, exc):
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    shutil.rmtree(path, onerror=handle_error)
+
+
 def clone_repo(repo_url):
     if os.path.exists("./tmp_repo"):
-        shutil.rmtree("./tmp_repo")
+        force_remove("./tmp_repo")
     result = subprocess.run(
         ["git", "clone", "--depth", "1", repo_url, "./tmp_repo"],
         capture_output=True, text=True
@@ -137,7 +147,7 @@ def index_repo(repo_url):
     # langchain creates FAISS index from all documents in one shot
     vector_store = FAISS.from_documents(all_docs, embeddings)
 
-    shutil.rmtree("./tmp_repo", ignore_errors=True)
+    force_remove("./tmp_repo")
 
     return {
         "files_indexed": len(files),
