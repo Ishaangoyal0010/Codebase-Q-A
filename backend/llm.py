@@ -1,11 +1,8 @@
 import os
 from groq import Groq
 from langchain.prompts import ChatPromptTemplate
-from langchain.schema.output_parser import StrOutputParser
-from langchain_community.chat_models import ChatOpenAI
 from retriever import build_context
 
-client = Groq()
 MODEL = "llama-3.1-8b-instant"
 
 prompt_template = ChatPromptTemplate.from_messages([
@@ -20,10 +17,13 @@ prompt_template = ChatPromptTemplate.from_messages([
 
 
 def ask_llm(question, chunks):
+    client = Groq() 
     context = build_context(chunks)
 
+    
     formatted = prompt_template.format_messages(context=context, question=question)
 
+    # extract the text from langchain messages and call groq directly
     system_msg = formatted[0].content
     user_msg = formatted[1].content
 
