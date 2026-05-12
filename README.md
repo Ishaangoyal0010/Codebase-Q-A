@@ -48,15 +48,39 @@ This whole approach is called RAG — instead of asking the LLM to memorize the 
 - **Groq** — free LLM API, using llama-3.1-8b model, super fast
 - **sentence-transformers** — converts code into vectors using all-MiniLM-L6-v2
 - **Docker** — containerizes everything so it runs on any machine
+- **Github Actions** — deployed successfully
+---
+
+## Option 1 — Run with Docker (easiest, recommended)
+
+No need to install Python or any dependencies. Just need Docker Desktop installed.
+
+**Step 1 — Pull the images from Docker Hub**
+```bash
+docker pull ishaan0010/codebaseqa-backend:v2
+docker pull ishaan0010/codebaseqa-frontend:v2
+```
+
+**Step 2 — Create a `.env` file** in whatever folder you are in and add your Groq key:
+```
+GROQ_API_KEY=your_key_here
+```
+Get a free key at https://console.groq.com (free).
+**Step 3 — Download the docker-compose.yml** from this repo and run:
+```bash
+docker-compose up
+```
+
+That's it. Open `http://localhost:8501` in your browser.
 
 ---
 
-## How to run locally
+## Option 2 — Run locally (for development)
 
 **Step 1 — Clone the repo**
 ```bash
-git clone https://github.com/your-username/codebase-qa
-cd codebase-qa
+git clone https://github.com/Ishaangoyal0010/Codebase-Q-A
+cd Codebase-Q-A
 ```
 
 **Step 2 — Create virtual environment**
@@ -70,52 +94,27 @@ source venv/bin/activate      # mac/linux
 ```bash
 pip install -r requirements.txt
 ```
-This will take a few minutes, lot of packages.
 
 **Step 4 — Add your Groq API key**
 
-Create a `.env` file in the root folder and paste this:
+Create a `.env` file in the root folder:
 ```
 GROQ_API_KEY=your_key_here
 ```
-Get a free key at https://console.groq.com — takes 2 minutes, no credit card.
 
-**Step 5 — Run the backend**
+**Step 5 — Run the backend** 
 ```bash
 cd backend
-uvicorn main:app --reload --port 8000
+uvicorn main:app --port 8000
 ```
-You can test it at `http://localhost:8000/docs` — FastAPI gives a free UI to try the endpoints.
 
 **Step 6 — Run the frontend** (open a new terminal)
 ```bash
 cd frontend
 streamlit run app.py
 ```
+
 Open `http://localhost:8501` and start using it.
-
----
-
-## How to run with Docker
-
-Make sure Docker Desktop is running, then:
-```bash
-docker-compose up --build
-```
-Frontend → `http://localhost:8501`
-Backend → `http://localhost:8000`
-
-To push images to Docker Hub (replace with your username in docker-compose.yml first):
-```bash
-docker-compose build
-docker-compose push
-```
-
-To run on any other computer after pushing:
-```bash
-docker-compose pull
-docker-compose up
-```
 
 ---
 
@@ -138,6 +137,6 @@ codebase-qa/
 
 ---
 
-## One thing to keep in mind
+## REMEMBER
 
 FAISS runs in memory so if you restart the backend the index gets cleared and you'll need to re-index the repo. Good enough for a project though.

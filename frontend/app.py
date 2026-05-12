@@ -6,7 +6,7 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 st.set_page_config(page_title="Codebase Q&A", page_icon="🔍", layout="wide")
 
-st.title("🔍 Codebase Q&A")
+st.title("Codebase Q&A")
 st.caption("Index any GitHub repo and ask questions about the code")
 st.divider()
 

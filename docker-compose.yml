@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    image: your-dockerhub-username/codebaseqa-backend:latest
+    image: ishaan0010/codebaseqa-backend:v2
     ports:
       - "8000:8000"
     env_file:
@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    image: your-dockerhub-username/codebaseqa-frontend:latest
+    image: ishaan0010/codebaseqa-frontend:v2
     ports:
       - "8501:8501"
     environment:
