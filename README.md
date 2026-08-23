@@ -116,24 +116,6 @@ streamlit run app.py
 
 Open `http://localhost:8501` and start using it.
 
----
-
-## Project structure
-
-```
-codebase-qa/
-├── backend/
-│   ├── indexer.py      clones repo, chunks code, embeds and stores in FAISS
-│   ├── retriever.py    takes a question, searches FAISS, returns relevant chunks
-│   ├── llm.py          builds prompt using LangChain, calls Groq, returns answer
-│   └── main.py         FastAPI app with /index and /ask endpoints
-├── frontend/
-│   └── app.py          Streamlit chat UI
-├── docker-compose.yml
-├── requirements.txt
-├── .env                add your GROQ_API_KEY here
-└── .dockerignore
-```
 
 ---
 
